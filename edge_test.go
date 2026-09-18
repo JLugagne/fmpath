@@ -306,6 +306,14 @@ func TestMainRun(t *testing.T) {
 		t.Errorf("no args: code=%d want 2", code)
 	}
 
+	var help bytes.Buffer
+	if code := mainRun([]string{"--help"}, &help, &bytes.Buffer{}); code != 0 {
+		t.Errorf("help: code=%d want 0", code)
+	}
+	if !strings.Contains(help.String(), "Usage:") {
+		t.Errorf("help = %q", help.String())
+	}
+
 	var stderr bytes.Buffer
 	if code := mainRun([]string{"--get", "id", "nope.md"}, &bytes.Buffer{}, &stderr); code != 1 {
 		t.Errorf("missing file: code=%d want 1", code)

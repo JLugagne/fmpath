@@ -66,6 +66,18 @@ func TestParseArgsErrors(t *testing.T) {
 	}
 }
 
+func TestParseArgsHelp(t *testing.T) {
+	for _, arg := range []string{"--help", "-h", "-help"} {
+		opts, err := parseArgs([]string{arg})
+		if err != nil {
+			t.Fatalf("parseArgs(%q): %v", arg, err)
+		}
+		if !opts.help {
+			t.Errorf("parseArgs(%q): help = false", arg)
+		}
+	}
+}
+
 func TestParseArgsFilesOnly(t *testing.T) {
 	opts, err := parseArgs([]string{"a.md", "b.md"})
 	if err != nil {

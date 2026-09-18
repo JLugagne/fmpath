@@ -28,6 +28,7 @@ fmpath [--get PATH]... [--set PATH=VALUE]... FILE...
 - `--get` selects a field to read. It can be repeated.
 - `--set` assigns a value to a field. It can be repeated.
 - Paths may start with a dot and use `.` to descend into nested mappings: `.meta.author.name`.
+- `--help` (or `-h`) prints a usage summary and exits.
 
 ## Reading fields
 

@@ -20,6 +20,7 @@ type options struct {
 	gets  []getOp
 	sets  []setOp
 	files []string
+	help  bool
 }
 
 func parseArgs(args []string) (*options, error) {
@@ -29,6 +30,10 @@ func parseArgs(args []string) (*options, error) {
 		arg := args[i]
 
 		switch {
+		case arg == "--help" || arg == "-h" || arg == "-help":
+			opts.help = true
+			return opts, nil
+
 		case arg == "--get" || arg == "-get":
 			val, next, err := flagValue(args, i, arg)
 			if err != nil {
