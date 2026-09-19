@@ -21,12 +21,13 @@ go build -o fmpath .
 ## Usage
 
 ```
-fmpath [--get PATH]... [--set PATH=VALUE]... FILE...
+fmpath [--get PATH]... [--set PATH=VALUE]... [--one-line] FILE...
 ```
 
 - `FILE...` is one or more Markdown files. Shell globs work as usual (`*.md`).
 - `--get` selects a field to read. It can be repeated.
 - `--set` assigns a value to a field. It can be repeated.
+- `--one-line` (or `-one-line`) renders each file's keys on a single line (see below).
 - Paths may start with a dot and use `.` to descend into nested mappings: `.meta.author.name`.
 - `--help` (or `-h`) prints a usage summary and exits.
 
@@ -97,6 +98,30 @@ f2.md:
 ```
 
 In this mode `fmpath` does not parse or re-encode the YAML: it prints the original frontmatter block, indented under the file name. Formatting, key order and comments are preserved exactly.
+
+### One line per file
+
+With `--one-line` (or `-one-line`), each file's keys are printed on a single line instead of a multi-line block. This is handy for quickly scanning many files without piping through `tr`/`paste`:
+
+```sh
+fmpath --one-line *.md
+```
+
+```text
+f1.md: id: XX name: Alice meta: {level: 3}
+f2.md: id: YY
+```
+
+Nested mappings and sequences are rendered inline with `{...}` and `[...]`. `--one-line` also applies to `--get` selections, collapsing each file onto one line:
+
+```sh
+fmpath --one-line --get id --get name *.md
+```
+
+```text
+f1.md: id: XX name: Alice
+f2.md: id: YY name: Bob
+```
 
 ## Writing fields
 

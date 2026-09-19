@@ -17,10 +17,11 @@ type setOp struct {
 }
 
 type options struct {
-	gets  []getOp
-	sets  []setOp
-	files []string
-	help  bool
+	gets    []getOp
+	sets    []setOp
+	files   []string
+	help    bool
+	oneLine bool
 }
 
 func parseArgs(args []string) (*options, error) {
@@ -33,6 +34,9 @@ func parseArgs(args []string) (*options, error) {
 		case arg == "--help" || arg == "-h" || arg == "-help":
 			opts.help = true
 			return opts, nil
+
+		case arg == "--one-line" || arg == "-one-line":
+			opts.oneLine = true
 
 		case arg == "--get" || arg == "-get":
 			val, next, err := flagValue(args, i, arg)

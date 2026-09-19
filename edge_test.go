@@ -339,3 +339,84 @@ func TestMainRun(t *testing.T) {
 		t.Errorf("file = %q", data)
 	}
 }
+
+func TestParseArgsOneLine(t *testing.T) {
+	for _, arg := range []string{"--one-line", "-one-line"} {
+		opts, err := parseArgs([]string{arg, "--get", "id", "a.md"})
+		if err != nil {
+			t.Fatalf("parseArgs(%q): %v", arg, err)
+		}
+		if !opts.oneLine {
+			t.Errorf("parseArgs(%q): oneLine = false", arg)
+		}
+	}
+}
+
+func TestRunOneLineWholeFrontmatter(t *testing.T) {
+	withFM := writeTemp(t, "fm.md", "---\nid: XX\nname: NN\n---\nbody\n")
+	plain := writeTemp(t, "plain.md", "# no fm\n")
+
+	opts, err := parseArgs([]string{"--one-line", withFM, plain})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	if err := run(opts, &buf); err != nil {
+		t.Fatal(err)
+	}
+	want := withFM + ": id: XX name: NN\n"
+	if buf.String() != want {
+		t.Errorf("output = %q, want %q", buf.String(), want)
+	}
+}
+
+func TestRunOneLineGets(t *testing.T) {
+	withFM := writeTemp(t, "fm.md", "---\nid: XX\nname: NN\ndraft: false\n---\nbody\n")
+
+	opts, err := parseArgs([]string{"--one-line", "--get", "id", "--get", "name", withFM})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	if err := run(opts, &buf); err != nil {
+		t.Fatal(err)
+	}
+	want := withFM + ": id: XX name: NN\n"
+	if buf.String() != want {
+		t.Errorf("output = %q, want %q", buf.String(), want)
+	}
+}
+
+func TestRunOneLineNestedValues(t *testing.T) {
+	withFM := writeTemp(t, "fm.md", "---\nid: XX\nmeta:\n  level: 3\n  tags:\n    - go\n    - cli\n---\nbody\n")
+
+	opts, err := parseArgs([]string{"--one-line", withFM})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	if err := run(opts, &buf); err != nil {
+		t.Fatal(err)
+	}
+	want := withFM + ": id: XX meta: {level: 3, tags: [go, cli]}\n"
+	if buf.String() != want {
+		t.Errorf("output = %q, want %q", buf.String(), want)
+	}
+}
+
+func TestRunOneLineEmptyFrontmatter(t *testing.T) {
+	withFM := writeTemp(t, "fm.md", "---\n---\nbody\n")
+
+	opts, err := parseArgs([]string{"--one-line", withFM})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	if err := run(opts, &buf); err != nil {
+		t.Fatal(err)
+	}
+	want := withFM + ":\n"
+	if buf.String() != want {
+		t.Errorf("output = %q, want %q", buf.String(), want)
+	}
+}

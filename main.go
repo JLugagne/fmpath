@@ -13,7 +13,7 @@ func main() {
 const helpText = `fmpath - read and write YAML frontmatter of Markdown files
 
 Usage:
-  fmpath [--get PATH]... [--set PATH=VALUE]... FILE...
+  fmpath [--get PATH]... [--set PATH=VALUE]... [--one-line] FILE...
   fmpath --help
 
 Read fields:
@@ -25,9 +25,13 @@ Write fields:
 Print the whole frontmatter (no --get):
   fmpath *.md
 
+Print one line per file:
+  fmpath --one-line *.md
+
 Flags:
   --get PATH        Select a field to read; repeatable. The leading dot is optional.
   --set PATH=VALUE  Set a field; repeatable. Values are parsed as YAML scalars when possible.
+  --one-line        Render each file's keys on a single line. -one-line works too.
   --help, -h        Show this help and exit.
   --                Treat every following argument as a file.
 
